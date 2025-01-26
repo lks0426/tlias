@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: tlias-web-management
+  # 配置数据库连接信息
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tlias
+    username: root
+    password: 123456
+mybatis:
+  # 配置mybatis的日志输出：stdout表示将日志输出到控制台
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # 配置mybatis的mapper文件位置
+  # mapper-locations: classpath:mapper/*.xml
+    # 开启驼峰命名映射开关
+    map-underscore-to-camel-case: true
+
+#阿里云OSS
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: wrx-java-web
+    region: cn-beijing

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wrx.mapper.StudentMapper">
+    <!--新增学员信息-->
+    <insert id="insertStudent">
+        INSERT INTO student (name,
+                             no,
+                             gender,
+                             phone,
+                             id_card,
+                             is_college,
+                             address,
+                             `degree`,
+                             graduation_date,
+                             clazz_id,
+                             violation_count,
+                             violation_score,
+                             create_time,
+                             update_time)
+        VALUES (#{name},#{no},#{gender},#{phone},#{idCard},#{isCollege},#{address},#{degree},#{graduationDate},#{clazzId},#{violationCount},#{violationScore},#{createTime},#{updateTime})
+    </insert>
+
+    <!--修改学员信息-->
+    <update id="updateStudentById">
+        UPDATE student
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="no != null and no != ''">no = #{no},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="degree != null">degree = #{degree},</if>
+            <if test="idCard != null and idCard != ''">id_card = #{idCard},</if>
+            <if test="isCollege != null">is_college = #{isCollege},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="graduationDate != null">graduation_date = #{graduationDate},</if>
+            <if test="violationCount != null">violation_count = #{violationCount},</if>
+            <if test="violationScore != null">violation_score = #{violationScore},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!--批量删除学生信息-->
+    <delete id="delete">
+        delete from student where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--按条件查询所有学生信息-->
+    <select id="studentList" resultType="com.wrx.pojo.Student">
+        SELECT s.id ,
+               s.name ,
+               s.`no` ,
+               s.gender,
+               s.phone ,
+               s.`degree` ,
+               s.id_card ,
+               s.is_college ,
+               s.address ,
+               s.graduation_date ,
+               s.violation_count ,
+               s.violation_score ,
+               s.clazz_id ,
+               s.create_time ,
+               s.update_time ,
+               c.name clazzName
+        FROM student s
+                 LEFT JOIN class c
+                           ON s.clazz_id = c.id
+        <where>
+            <if test="name != null and name != ''">s.name LIKE CONCAT('%',#{name},'%')</if>
+            <if test="degree != null">AND s.`degree`  = #{degree}</if>
+            <if test="clazzId != null">AND s.clazz_id = #{clazzId}</if>
+        </where>
+        ORDER BY s.update_time DESC
+    </select>
+    <!--学员学历统计-->
+    <select id="getStudentDegreeData" resultType="java.util.Map">
+        SELECT
+            CASE
+                WHEN `degree` = 1 THEN '初中'
+                WHEN `degree` = 2 THEN '高中'
+                WHEN `degree` = 3 THEN '大专'
+                WHEN `degree` = 4 THEN '本科'
+                WHEN `degree` = 5 THEN '硕士'
+                WHEN `degree` = 6 THEN '博士'
+                ELSE '其他'
+                END name,
+            COUNT(1) value
+        from student
+        GROUP BY `degree`
+    </select>
+    <!--按班级统计学员数量-->
+    <select id="getStudentDataByClass" resultType="java.util.Map">
+        SELECT c.name ,
+               count(1) value
+        FROM student s
+           LEFT JOIN class c ON s.clazz_id = c.id
+        GROUP BY c.name
+        ORDER BY value DESC
+    </select>
+</mapper>
