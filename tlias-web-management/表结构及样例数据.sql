@@ -24,7 +24,7 @@ INSERT INTO tlias.class (name,room,begin_date,end_date,master_id,subject,create_
 	 ('Java高级开发','123','2024-12-01','2026-01-01',10,1,'2025-01-08 16:01:00','2025-01-08 16:01:00');
 	 
 
---部门表
+-- 部门表
 CREATE TABLE `dept` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID,主键',
   `name` varchar(10) NOT NULL COMMENT '部门名称',
